@@ -1,0 +1,75 @@
+{
+  "name": "stan-parser",
+  "version": "0.1.0",
+  "tag": "canary",
+  "license": "MIT",
+  "description": "A Stan language parser",
+  "homepage": "https://github.com/tamuratak/stan-parser",
+  "main": "./out/src/main.js",
+  "types": "./out/types/src/main.d.ts",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tamuratak/stan-parser.git"
+  },
+  "bin": {
+    "luparse": "./bin/stanparse"
+  },
+  "optionalDependencies": {
+    "commander": "^2.20.0",
+    "pegjs-backtrace": "^0.2.0"
+  },
+  "devDependencies": {
+    "@types/mocha": "^8.2.0",
+    "@types/node": "^12.12.21",
+    "@typescript-eslint/eslint-plugin": "^4.10.0",
+    "@typescript-eslint/parser": "^4.10.0",
+    "eslint": "^7.16.0",
+    "husky": "^3.0.2",
+    "mocha": "^8.2.1",
+    "npm-run-all": "^4.1.5",
+    "onchange": "^6.1.0",
+    "pegjs": "^0.10.0",
+    "rimraf": "^3.0.0",
+    "source-map-support": "^0.5.19",
+    "typedoc": "^0.20.9",
+    "typepark": "^0.8.0",
+    "typescript": "^4.1.3"
+  },
+  "files": [
+    "bin/**/*",
+    "out/src/**/*",
+    "out/bin/**/*",
+    "out/types/**/*"
+  ],
+  "keywords": [
+    "stan",
+    "parser"
+  ],
+  "scripts": {
+    "generate:stan:simple": "pegjs --allowed-start-rules Root -o out/src/stan/stan_parser_simple.js src/stan/stan.pegjs",
+    "generate:stan:trace": "pegjs --trace --allowed-start-rules Root -o out/src/stan/stan_parser_trace.js src/stan/stan.pegjs",
+    "generate": "run-p 'generate:*'",
+    "build": "run-s clean compile generate",
+    "build:continue": "run-s -c clean compile generate",
+    "compile": "tsc -p ./",
+    "clean": "rimraf out/ .eslintcache",
+    "docs": "run-s docs:typedoc docs:edit",
+    "docs:typedoc": "typedoc",
+    "docs:edit": "node out/dev/editDocs.js docs/**/*.html",
+    "lint": "eslint --cache --ext .ts .",
+    "lint:fix": "eslint --fix --cache --ext .ts .",
+    "prerelease": "run-s build lint test",
+    "test": "run-s -c test:xunit test:spec",
+    "test:xunit": "mocha --require source-map-support/register --reporter xunit --ui tdd out/test/**/*.js",
+    "test:spec": "mocha --require source-map-support/register --ui tdd out/test/**/*.js",
+    "watch": "run-p -c build:continue watch:docs watch:ts watch:pegjs",
+    "watch:docs": "onchange 'src/**/*.ts' 'test/**/*.ts' 'bin/**/*.ts' -- run-s docs",
+    "watch:ts": "onchange 'src/**/*.ts' 'test/**/*.ts' 'bin/**/*.ts' -- run-s compile test",
+    "watch:pegjs": "onchange 'src/**/*.pegjs' -- run-s generate test"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "eslint --cache --ext .ts ."
+    }
+  }
+}

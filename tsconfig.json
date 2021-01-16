@@ -1,0 +1,30 @@
+{
+    "compilerOptions": {
+        "alwaysStrict": true,
+        "declaration": true,
+        "forceConsistentCasingInFileNames": true,
+        "lib": [
+            "es2017"
+        ],
+        "module": "commonjs",
+        "noFallthroughCasesInSwitch": true,
+        "noImplicitAny": true,
+        "noImplicitReturns": true,
+        "noImplicitThis": true,
+        "noUnusedLocals": true,
+        "noUnusedParameters": true,
+        "outDir": "out",
+        "declarationDir": "out/types",
+        "rootDir": ".",
+        "sourceMap": true,
+        "strictNullChecks": true,
+        "target": "es2017",
+        "baseUrl": "./",
+        "paths": {"pegjs-backtrace": ["types/pegjs-backtrace"]},
+        "typeRoots": ["./types", "./node_modules/@types"]
+    },
+    "exclude": [
+        "node_modules",
+        "out"
+    ]
+}
