@@ -47,7 +47,6 @@
   ],
   "scripts": {
     "generate:stan:simple": "pegjs --allowed-start-rules Root -o out/src/stan/stan_parser_simple.js src/stan/stan.pegjs",
-    "generate:stan:trace": "pegjs --trace --allowed-start-rules Root -o out/src/stan/stan_parser_trace.js src/stan/stan.pegjs",
     "generate": "run-p 'generate:*'",
     "build": "run-s clean compile generate",
     "build:continue": "run-s -c clean compile generate",
