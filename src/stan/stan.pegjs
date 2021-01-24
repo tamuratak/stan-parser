@@ -67,18 +67,22 @@ TermPrec3
   / TermPrec2
 
 TermPrec2
+  = TermPrec2_p
+  / TermPrec1
+
+TermPrec2_p
   = x:[!+-] __ arg:TermPrec1
   {
     return { kind: "unaryOp", name: x, arg }
   }
-  / TermPrec1
 
 TermPrec1
-  = left:TermPrec0 c:(__ "^" __ TermPrec0)+
+  = left:TermPrec0 c:(__ "^" __ (TermPrec0 / TermPrec2_p))+
   {
     return { kind: "expOp", name: "^", left, c }
   }
   / TermPrec0
+
 
 TermPrec0
   = Indexing
