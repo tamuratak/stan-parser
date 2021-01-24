@@ -47,6 +47,7 @@
   ],
   "scripts": {
     "generate:simple": "pegjs --allowed-start-rules Root -o out/src/stan/stan_parser_simple.js src/stan/stan.pegjs",
+    "generate:trace": "pegjs --trace --allowed-start-rules Root -o out/src/stan/stan_parser_trace.js src/stan/stan.pegjs",
     "generate": "run-p 'generate:*'",
     "build": "run-s clean compile generate",
     "build:continue": "run-s -c clean compile generate",
@@ -61,8 +62,7 @@
     "test": "run-s -c test:xunit test:spec",
     "test:xunit": "mocha --require source-map-support/register --reporter xunit --ui tdd out/test/**/*.js",
     "test:spec": "mocha --require source-map-support/register --ui tdd out/test/**/*.js",
-    "watch": "run-p -c build:continue watch:docs watch:ts watch:pegjs",
-    "watch:docs": "onchange 'src/**/*.ts' 'test/**/*.ts' 'bin/**/*.ts' -- run-s docs",
+    "watch": "run-p -c build:continue watch:ts watch:pegjs",
     "watch:ts": "onchange 'src/**/*.ts' 'test/**/*.ts' 'bin/**/*.ts' -- run-s compile",
     "watch:pegjs": "onchange 'src/**/*.pegjs' -- run-s generate"
   },

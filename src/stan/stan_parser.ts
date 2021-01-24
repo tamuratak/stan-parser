@@ -1,4 +1,5 @@
 import * as spSimple from './stan_parser_simple'
+import * as spTrace from './stan_parser_trace'
 import {ParserOptions as ParserOptionsBase} from '../pegjs/pegjs_types'
 
 export {isSyntaxError} from '../pegjs/pegjs_types'
@@ -34,5 +35,9 @@ export function parse(
     optArg?: ParserOptions
 ): unknown {
     const option = optArg ? Object.assign({}, optArg) : undefined
-    return spSimple.parse(texString, option)
+    if (option && option.tracer) {
+        return spTrace.parse(texString, option)
+    } else {
+        return spSimple.parse(texString, option)
+    }
 }
