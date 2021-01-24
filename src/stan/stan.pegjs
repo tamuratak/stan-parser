@@ -11,7 +11,7 @@ Root
 Expression
   = Indexing
 ///  / BinaryOp
-  / Term9
+  / TermPrec9
 
 Indexing
   = x:common_expression __ "[" __ e:Expression __ "]"
@@ -19,81 +19,76 @@ Indexing
     return { kind: "indexing", variable: x, indexing: e };
   }
 
-Term9
-  = left:Term8 c:(__ "||" __ Term8)+
+TermPrec9
+  = left:TermPrec8 c:(__ "||" __ TermPrec8)+
   {
     return { c }
   }
-  / Term8
+  / TermPrec8
 
-Term8
-  = left:Term7 c:(__ "&&" __ Term7)+
+TermPrec8
+  = left:TermPrec7 c:(__ "&&" __ TermPrec7)+
   {
     return { c };
   }
-  / Term7
+  / TermPrec7
 
-Term7
-  = left:Term6 c:(__ ("==" / "!=" ) __ Term6)+
-  / Term6
+TermPrec7
+  = left:TermPrec6 c:(__ ("==" / "!=" ) __ TermPrec6)+
+  / TermPrec6
 
-Term6
-  = left:Term5 c:(__ ("<" / "<=" / ">" / ">=" ) __ Term5)+
+TermPrec6
+  = left:TermPrec5 c:(__ ("<" / "<=" / ">" / ">=" ) __ TermPrec5)+
   {
     return { kind: "addOp", c }
   }
-  / Term5
+  / TermPrec5
 
-Term5
-  = left:Term4 c:(__ [-+] __ Term4)+
+TermPrec5
+  = left:TermPrec4 c:(__ [-+] __ TermPrec4)+
   {
     return { kind: "addOp", c }
   }
-  / Term4
+  / TermPrec4
 
-Term4
-  = left:Term3 c:(__ ("*" / ".*" / "/" / "./" / "%" ) __ Term3)+
+TermPrec4
+  = left:TermPrec3 c:(__ ("*" / ".*" / "/" / "./" / "%" ) __ TermPrec3)+
   {
     return { kind: "multiOp", c }
   }
-  / Term3
+  / TermPrec3
 
-Term3
-  = left:Term2 __ "\\" __ right:Term2
+TermPrec3
+  = left:TermPrec2 __ "\\" __ right:TermPrec2
   {
     return { kind: "leftDivOp", name: "\\", left, right }
   }
-  / Term2
+  / TermPrec2
 
-Term2
-  = x:[!+-] __ arg:Term1
+TermPrec2
+  = x:[!+-] __ arg:TermPrec1
   {
     return { kind: "unaryOp", name: x, arg }
   }
-  / Term1
+  / TermPrec1
 
-Term1
-  = left:Term0 __ "^" __ c:Term0
+TermPrec1
+  = left:TermPrec0 c:(__ "^" __ TermPrec0)+
   {
     return { kind: "expOp", name: "^", left, c }
   }
-  / Term0
+  / TermPrec0
 
-Term0
+TermPrec0
   = Indexing
   / PostfixOp
-  / Term
-  / Variable
+  / common_expression
 
 PostfixOp
   = x:( Indexing / common_expression ) __ "'"
   {
     return { kind: "postfixOp", name: "'", arg: x };
   }
-
-Term
-  = common_expression
-
 
 common_expression
   = Variable
@@ -107,4 +102,9 @@ Variable
 identifier
   = [a-zA-Z] [a-zA-Z0-9_]*
   
-__ = [ \t\r\n]*
+__
+  = [ \t\r\n]*
+  {
+    return
+  }
+
