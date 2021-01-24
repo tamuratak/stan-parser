@@ -46,7 +46,7 @@
     "parser"
   ],
   "scripts": {
-    "generate:stan:simple": "pegjs --allowed-start-rules Root -o out/src/stan/stan_parser_simple.js src/stan/stan.pegjs",
+    "generate:simple": "pegjs --allowed-start-rules Root -o out/src/stan/stan_parser_simple.js src/stan/stan.pegjs",
     "generate": "run-p 'generate:*'",
     "build": "run-s clean compile generate",
     "build:continue": "run-s -c clean compile generate",
@@ -63,8 +63,8 @@
     "test:spec": "mocha --require source-map-support/register --ui tdd out/test/**/*.js",
     "watch": "run-p -c build:continue watch:docs watch:ts watch:pegjs",
     "watch:docs": "onchange 'src/**/*.ts' 'test/**/*.ts' 'bin/**/*.ts' -- run-s docs",
-    "watch:ts": "onchange 'src/**/*.ts' 'test/**/*.ts' 'bin/**/*.ts' -- run-s compile test",
-    "watch:pegjs": "onchange 'src/**/*.pegjs' -- run-s generate test"
+    "watch:ts": "onchange 'src/**/*.ts' 'test/**/*.ts' 'bin/**/*.ts' -- run-s compile",
+    "watch:pegjs": "onchange 'src/**/*.pegjs' -- run-s generate"
   },
   "husky": {
     "hooks": {
