@@ -96,7 +96,8 @@ PostfixOp
   }
 
 common_expression
-  = Variable
+  = $real_literal
+  / Variable
 
 Variable
   = x:$identifier
@@ -106,7 +107,15 @@ Variable
 
 identifier
   = [a-zA-Z] [a-zA-Z0-9_]*
-  
+
+real_literal
+  = integer_literal '.' [0-9]* exp_literal?
+  / '.' [0-9]+ exp_literal?
+  / integer_literal exp_literal?
+
+exp_literal = ('e' / 'E') ('+' / '-')? integer_literal
+
+integer_literal = [0-9]+
 __
   = [ \t\r\n]*
   {
