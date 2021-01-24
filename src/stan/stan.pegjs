@@ -9,9 +9,7 @@ Root
   }
 
 Expression
-  = Indexing
-///  / BinaryOp
-  / TermPrec9
+  = TermPrec9
 
 Indexing
   = x:common_expression __ "[" __ e:Expression __ "]"
@@ -22,46 +20,49 @@ Indexing
 TermPrec9
   = left:TermPrec8 c:(__ "||" __ TermPrec8)+
   {
-    return { c }
+    return { kind: "binaryOp9", c }
   }
   / TermPrec8
 
 TermPrec8
   = left:TermPrec7 c:(__ "&&" __ TermPrec7)+
   {
-    return { c };
+    return { kind: "binaryOp8", c };
   }
   / TermPrec7
 
 TermPrec7
   = left:TermPrec6 c:(__ ("==" / "!=" ) __ TermPrec6)+
+    {
+    return { kind: "binaryOp7", c }
+  }
   / TermPrec6
 
 TermPrec6
   = left:TermPrec5 c:(__ ("<" / "<=" / ">" / ">=" ) __ TermPrec5)+
   {
-    return { kind: "addOp", c }
+    return { kind: "binaryOp6", c }
   }
   / TermPrec5
 
 TermPrec5
   = left:TermPrec4 c:(__ [-+] __ TermPrec4)+
   {
-    return { kind: "addOp", c }
+    return { kind: "binaryOp5", c }
   }
   / TermPrec4
 
 TermPrec4
   = left:TermPrec3 c:(__ ("*" / ".*" / "/" / "./" / "%" ) __ TermPrec3)+
   {
-    return { kind: "multiOp", c }
+    return { kind: "binaryOp4", c }
   }
   / TermPrec3
 
 TermPrec3
   = left:TermPrec2 __ "\\" __ right:TermPrec2
   {
-    return { kind: "leftDivOp", name: "\\", left, right }
+    return { kind: "binaryOp3", name: "\\", left, right }
   }
   / TermPrec2
 
@@ -75,7 +76,7 @@ TermPrec2
 TermPrec1
   = left:TermPrec0 c:(__ "^" __ TermPrec0)+
   {
-    return { kind: "expOp", name: "^", left, c }
+    return { kind: "binaryOp1", name: "^", left, c }
   }
   / TermPrec0
 
