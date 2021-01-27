@@ -1,18 +1,17 @@
 {
-    function leftAssociate(leftTerm, rightTermArrayArg) {
+    function leftAssociate(kind, leftTerm, rightTermArrayArg) {
         const termArray = rightTermArrayArg.flat().filter(e => e);
         if (termArray.length <= 2) {
             const right = termArray[1];
-            const op = termArray[0];
-            return {
-                left: leftTerm, right, op
-            };
+            const name = termArray[0];
+            const left = leftTerm;
+            return { kind, name, left, right };
         } else {
             const right = termArray[termArray.length - 1];
-            const op = termArray[termArray.length - 2];
+            const name = termArray[termArray.length - 2];
             const rest = termArray.slice(0, termArray.length - 2);
-            const left = leftAssociate(leftTerm, rest);
-            return { left, right, op }
+            const left = leftAssociate(kind, leftTerm, rest);
+            return { kind, name, left, right };
         }
     }
 }
@@ -38,49 +37,49 @@ Indexing
 TermPrec9
   = left:TermPrec8 c:(__ "||" __ TermPrec8)+
   {
-    return { kind: "orOp", c }
+    return leftAssociate("orOp", left, c);
   }
   / TermPrec8
 
 TermPrec8
   = left:TermPrec7 c:(__ "&&" __ TermPrec7)+
   {
-    return { kind: "andOp", c };
+    return leftAssociate("andOp", left, c);
   }
   / TermPrec7
 
 TermPrec7
   = left:TermPrec6 c:(__ ("==" / "!=" ) __ TermPrec6)+
     {
-    return { kind: "eqOp", c }
+    return leftAssociate("eqOp", left, c);
   }
   / TermPrec6
 
 TermPrec6
   = left:TermPrec5 c:(__ ("<" / "<=" / ">" / ">=" ) __ TermPrec5)+
   {
-    return { kind: "cmpOp", c }
+    return leftAssociate("cmpOp", left, c);
   }
   / TermPrec5
 
 TermPrec5
   = left:TermPrec4 c:(__ [-+] __ TermPrec4)+
   {
-    return leftAssociate(left, c);
+    return leftAssociate("addOp", left, c);
   }
   / TermPrec4
 
 TermPrec4
   = left:TermPrec3 c:(__ ("*" / ".*" / "/" / "./" / "%" ) __ TermPrec3)+
   {
-    return { kind: "mulOp", c }
+    return leftAssociate("mulOp", left, c);
   }
   / TermPrec3
 
 TermPrec3
-  = left:TermPrec2 __ "\\" __ right:TermPrec2
+  = left:TermPrec2 __ c:("\\" __ right:TermPrec2)+
   {
-    return { kind: "ldivOp", name: "\\", left, right }
+    return leftAssociate("ldivOp", left, c);
   }
   / TermPrec2
 
@@ -97,10 +96,9 @@ TermPrec2_p
 TermPrec1
   = left:TermPrec0 c:(__ "^" __ (TermPrec0 / TermPrec2_p))+
   {
-    return { kind: "expOp", name: "^", left, c }
+    return leftAssociate("expOp", left, c);
   }
   / TermPrec0
-
 
 TermPrec0
   = Indexing
