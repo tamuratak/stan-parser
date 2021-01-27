@@ -29,10 +29,20 @@ Expression
   }
 
 Indexing
-  = x:common_expression __ "[" __ e:Expression __ "]"
+  = x:common_expression __ "[" __ inds:indexes __ "]"
   {
-    return { kind: "indexing", variable: x, indexing: e, location: location() };
+    return { kind: "indexing", exp: x, indexes: inds, location: location() };
   }
+
+indexes
+  = index __ ("," index)*
+
+index
+  = Expression __ ":" __ Expression
+  / Expression __ ":"
+  / Expression
+  / ":" __ Expression
+  / ":"
 
 TermPrec9
   = left:TermPrec8 c:(__ "||" __ TermPrec8)+
