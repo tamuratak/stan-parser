@@ -5,13 +5,13 @@
             const right = termArray[1];
             const name = termArray[0];
             const left = leftTerm;
-            return { kind, name, left, right };
+            return { kind, name, left, right, location: { start: left.start, end: right.end } };
         } else {
             const right = termArray[termArray.length - 1];
             const name = termArray[termArray.length - 2];
             const rest = termArray.slice(0, termArray.length - 2);
             const left = leftAssociate(kind, leftTerm, rest);
-            return { kind, name, left, right };
+            return { kind, name, left, right, location: { start: left.start, end: right.end } };
         }
     }
 }
@@ -31,7 +31,7 @@ Expression
 Indexing
   = x:common_expression __ "[" __ e:Expression __ "]"
   {
-    return { kind: "indexing", variable: x, indexing: e };
+    return { kind: "indexing", variable: x, indexing: e, location: location() };
   }
 
 TermPrec9
@@ -90,7 +90,7 @@ TermPrec2
 TermPrec2_p
   = x:[!+-] __ arg:TermPrec1
   {
-    return { kind: "unaryOp", name: x, arg }
+    return { kind: "unaryOp", name: x, arg, location: location() }
   }
 
 TermPrec1
@@ -108,17 +108,20 @@ TermPrec0
 PostfixOp
   = x:( Indexing / common_expression ) __ "'"
   {
-    return { kind: "postfixOp", name: "'", arg: x };
+    return { kind: "postfixOp", name: "'", arg: x, location: location() };
   }
 
 common_expression
-  = $real_literal
+  = x:$real_literal
+  {
+    return { kind: "realLiteral", value: x, location: location() };
+  }
   / Variable
 
 Variable
   = x:$identifier
   {
-    return { kind: "variable", name: x };
+    return { kind: "variable", name: x, location: location() };
   }
 
 identifier
