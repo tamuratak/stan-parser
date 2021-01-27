@@ -1,15 +1,33 @@
 {
-
+    function leftAssociate(leftTerm, rightTermArrayArg) {
+        const termArray = rightTermArrayArg.flat().filter(e => e);
+        if (termArray.length <= 2) {
+            const right = termArray[1];
+            const op = termArray[0];
+            return {
+                left: leftTerm, right, op
+            };
+        } else {
+            const right = termArray[termArray.length - 1];
+            const op = termArray[termArray.length - 2];
+            const rest = termArray.slice(0, termArray.length - 2);
+            const left = leftAssociate(leftTerm, rest);
+            return { left, right, op }
+        }
+    }
 }
 
 Root
-  = __ x:(Expression __ )*
+  = __ x:(Expression)*
   {
       return x;
   }
 
 Expression
-  = TermPrec9
+  = x:TermPrec9 __
+  {
+    return x;
+  }
 
 Indexing
   = x:common_expression __ "[" __ e:Expression __ "]"
@@ -48,7 +66,7 @@ TermPrec6
 TermPrec5
   = left:TermPrec4 c:(__ [-+] __ TermPrec4)+
   {
-    return { kind: "addOp", c }
+    return leftAssociate(left, c);
   }
   / TermPrec4
 
