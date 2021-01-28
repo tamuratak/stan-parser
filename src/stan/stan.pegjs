@@ -22,6 +22,10 @@ Root
     return x;
   }
 
+Statement
+  = atomic_statement
+  / nested_statement
+
 atomic_statement
   = lhs __ assignment_op __ Expression __ ";"
   / Expression __ "~" __ identifier __ "(" expressions ")" __ truncation? __ ";"
@@ -44,6 +48,15 @@ truncation
 
 expressions
   = (Expression (__ "," __ Expression)*)?
+
+nested_statement
+  = "if" __ "(" __ Expression __ ")" __ Statement
+    ( __ "else" __ "if" __ "(" __ Expression __ ")" __ Statement )*
+    ( __ "else" __ Statement )?
+  / "while" __ "(" __ Expression __ ")" __ Statement
+  / "for" __ "(" __ identifier __ "in" __ Expression __ ":" __ Expression __ ")" __ Statement
+  / "for" __ "(" __ identifier __ "in" __ Expression __ ")" __ Statement
+//  / "{" __ var_decl* __ (Statement __)+ __ "}"
 
 Expression
   = x:TermPrec9 __
