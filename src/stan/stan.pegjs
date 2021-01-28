@@ -19,8 +19,31 @@
 Root
   = __ x:(Expression)*
   {
-      return x;
+    return x;
   }
+
+atomic_statement
+  = lhs __ assignment_op __ Expression __ ";"
+  / Expression __ "~" __ identifier __ "(" expressions ")" __ truncation? __ ";"
+  / "increment_log_prob" __ "(" __ Expression __ ")" __ ";"
+  / function_literal __ "(" __ expressions __ ")" __ ";"
+  / "target" __ "+=" __ Expression __ ";"
+  / "break" __ ";"
+  / "continue" __ ";"
+  / "print" __ "(" ")" __ ";"
+  / "reject" __ "(" ")" __ ";"
+  / "return" __ Expression __ ";"
+
+assignment_op
+  = "<-" / "=" / "+=" / "-=" / "*=" / "/=" / ".*=" / "./="
+
+lhs = identifier __ ("[" __ indexes __ "]")*
+
+truncation
+  = "T" __ "[" __ Expression? __ "," __ Expression? __ "]"
+
+expressions
+  = (Expression (__ "," __ Expression)*)?
 
 Expression
   = x:TermPrec9 __
@@ -133,6 +156,9 @@ Variable
   {
     return { kind: "variable", name: x, location: location() };
   }
+
+function_literal
+  = identifier
 
 identifier
   = [a-zA-Z] [a-zA-Z0-9_]*
