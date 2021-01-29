@@ -59,10 +59,10 @@ nested_statement
 //  / "{" __ var_decl* __ (Statement __)+ __ "}"
 
 Expression
-  = x:TermPrec9 __
-  {
-    return x;
-  }
+  = TermPrec9
+
+constr_expression
+  = TermPrec5
 
 Indexing
   = x:common_expression __ "[" __ inds:indexes __ "]"
@@ -163,6 +163,28 @@ common_expression
     return { kind: "realLiteral", value: x, location: location() };
   }
   / Variable
+
+var_type
+  = "int" __ range_constraint?
+  / "real" __ constraint
+  / "vector" __ constraint __ "[" __ Expression __ "]"
+
+constraint
+  = range_constraint
+  / "<" __ offset_multiplier __ ">"
+
+range_constraint
+  = "<" __ range __ ">"
+
+range
+  = "lower" __ "=" __ constr_expression __ "," __ "upper" __ "=" __ constr_expression
+  / "lower" __ "=" __ constr_expression
+  / "upper" __ "=" __ constr_expression
+
+offset_multiplier
+  = "offset" __ "=" __ constr_expression __ "," __ "multiplier" __ "=" __ constr_expression
+  / "offset" __ "=" __ constr_expression
+  / "multiplier" "=" __ constr_expression
 
 Variable
   = x:$identifier
